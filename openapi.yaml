@@ -10,7 +10,7 @@ info:
     It enables efficient tracking of sensor status, facilitating proactive maintenance and improving the reliability of the overall sensor network.
 
     Some useful links:
-    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+    - [The source API definition for the Sensor Network API](https://github.com/silshara/swagger-sensornetwork/blob/main/openapi.yaml)
   contact:
     name: Nilushi Werahara Arachchige (nilushi.weraharaarachchige@tuni.fi)
     email: nilushi.weraharaarachchige@tuni.fi
