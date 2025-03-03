@@ -1,0 +1,261 @@
+openapi: 3.1.0
+info:
+  title: Sensor Network API
+  description: |-
+    This is a sample Sensor Network API based on the OpenAPI 3.1 specification.
+    This API allows you to manage buildings and sensors within a sensor network.
+    You can add a new building, update an existing building, add sensors to them, update their state, and retrieve information about both buildings and sensors.
+
+    The API is designed to support real-time monitoring and management of sensors deployed across multiple buildings.
+    It enables efficient tracking of sensor status, facilitating proactive maintenance and improving the reliability of the overall sensor network.
+
+    Some useful links:
+    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+  contact:
+    name: Nilushi Werahara Arachchige (nilushi.weraharaarachchige@tuni.fi)
+    email: nilushi.weraharaarachchige@tuni.fi
+  version: 1.0.0
+tags:
+  - name: Building
+    description: Operations related to buildings
+  - name: Sensor
+    description: Operations related to sensors
+paths:
+  /buildings:
+    get:
+      tags:
+        - Building
+      summary: Get all buildings
+      description: Retrieve a list of all buildings.
+      responses:
+        '200':
+          description: A list of buildings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Building'
+    post:
+      tags:
+        - Building
+      summary: Add a new building
+      description: Add a new building to the network.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Building'
+      responses:
+        '201':
+          description: Building created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Building'
+        '400':
+          description: Invalid input
+  /buildings/{buildingId}:
+    get:
+      tags:
+        - Building
+      summary: Get a building by ID
+      description: Retrieve a specific building by its ID.
+      parameters:
+        - name: buildingId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Building details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Building'
+        '404':
+          description: Building not found
+    put:
+      tags:
+        - Building
+      summary: Update a building by ID
+      description: Update an existing building by its ID.
+      parameters:
+        - name: buildingId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Building'
+      responses:
+        '200':
+          description: Building updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Building'
+        '400':
+          description: Invalid input
+        '404':
+          description: Building not found
+  /buildings/{buildingId}/sensors:
+    get:
+      tags:
+        - Sensor
+      summary: Get all sensors in a given building
+      description: Retrieve all sensors in a specific building.
+      parameters:
+        - name: buildingId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of sensors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sensor'
+        '404':
+          description: Building not found
+  /sensors:
+    post:
+      tags:
+        - Sensor
+      summary: Add a new sensor or replace an existing sensor
+      description: Add a new sensor or replace an existing one.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sensor'
+      responses:
+        '201':
+          description: Sensor created or replaced successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+        '400':
+          description: Invalid input
+    get:
+      tags:
+        - Sensor
+      summary: Get sensors by state
+      description: Retrieve all sensors in a specific state.
+      parameters:
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [online, offline, error]
+      responses:
+        '200':
+          description: A list of sensors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sensor'
+  /sensors/{sensorId}:
+    patch:
+      tags:
+        - Sensor
+      summary: Update the state of a sensor by given ID
+      description: Update the state of a specific sensor.
+      parameters:
+        - name: sensorId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                state:
+                  type: string
+                  enum: [online, offline, error]
+      responses:
+        '200':
+          description: Sensor state updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+        '400':
+          description: Invalid input
+        '404':
+          description: Sensor not found
+    delete:
+      tags:
+        - Sensor
+      summary: Delete a sensor
+      description: Delete a specific sensor by its ID.
+      parameters:
+        - name: sensorId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Sensor deleted successfully
+        '404':
+          description: Sensor not found
+components:
+  schemas:
+    Building:
+      type: object
+      required:
+        - id
+        - name
+        - address
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: object
+          properties:
+            streetAddress:
+              type: string
+            postNumber:
+              type: integer
+    Sensor:
+      type: object
+      required:
+        - id
+        - name
+        - value
+        - state
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        value:
+          type: number
+        state:
+          type: string
+          enum: [online, offline, error]
